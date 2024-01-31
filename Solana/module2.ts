@@ -5,6 +5,7 @@ import { Keypair ,
     Transaction,
     clusterApiUrl,Connection,
     sendAndConfirmTransaction,
+    TransactionInstruction,
      LAMPORTS_PER_SOL} from "@solana/web3.js";
 import fs from "fs";
 
@@ -47,7 +48,33 @@ const sendSolInstruction=SystemProgram.transfer({
 transaction.add(sendSolInstruction);
 
 const connection=new Connection(clusterApiUrl("devnet"))
-const airdropSignature=await connection.requestAirdrop(ownerKeypair.publicKey,1*LAMPORTS_PER_SOL);
+// const airdropSignature=await connection.requestAirdrop(ownerKeypair.publicKey,1*LAMPORTS_PER_SOL);
+
+const lamports=BigInt(LAMPORTS_PER_SOL*0.1);
+const instructionData:Buffer=Buffer.alloc(4+8);
+//4 bytes for instruction and 8 bytes for lamports
+instructionData.writeUInt32LE(2,0);
+instructionData.writeBigUint64LE(lamports,4);
+
+const manualInstruction=new TransactionInstruction({
+ keys:[
+    {
+        pubkey:ownerKeypair.publicKey,
+        isSigner:true,
+        isWritable:true
+    },
+    {
+        pubkey:recipient,
+        isSigner:false,
+        isWritable:true
+    },
+ ],
+ programId:SystemProgram.programId,
+ data:instructionData
+});
+transaction.add(manualInstruction);
+console.log(transaction)
+
 
 const signature=await sendAndConfirmTransaction(
     connection,
@@ -55,6 +82,6 @@ const signature=await sendAndConfirmTransaction(
     [ownerKeypair]
 )
 console.log(signature)
-}
+ }
 
-main();
+main()
