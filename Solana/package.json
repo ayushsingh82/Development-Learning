@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@project-serum/borsh": "^0.2.5",
+    "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/web3.js": "^1.89.1"
   }
 }
