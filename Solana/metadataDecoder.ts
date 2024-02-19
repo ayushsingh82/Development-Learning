@@ -23,6 +23,31 @@ async function main(){
         borsh.str('symbol'),
         borsh.str('uri'),
         borsh.u16('sellerFeeBasisPoints'),
+        borsh.option(
+            borsh.vec(
+            borsh.struct([
+                borsh.publicKey('address'),
+                borsh.bool('verified'),
+                borsh.u8('share')
+            ]),
+            "creatorArray"),
+        "creators"),
+        borsh.bool("primarySaleHappened"),
+        borsh.bool("isMutable"),
+        borsh.option(borsh.struct([borsh.u16("editionNonceValue")]),'editionNonce'),
+        borsh.option(borsh.struct([borsh.u16("tokenStandardValue")]),'tokenStandard'),
+        borsh.option(borsh.struct([
+            borsh.bool('verified'),
+            borsh.publicKey('key')
+        ]),'collection'),
+        borsh.option(borsh.struct([
+            borsh.u8('useMethod'),
+            borsh.u64('remaining'),
+            borsh.u64('total')
+        ]),'uses'),
+        borsh.option(borsh.struct([
+            borsh.u64('details'),
+        ]),'collectionDetails'),
     ])
 
     if(accountInfo){
@@ -30,6 +55,7 @@ async function main(){
         console.log(metadata);
         console.log(metadata.mint.toBase58());
         console.log(metadata.sellerFeeBasisPoints);
+        console.log(metadata.creators[0].address.toBase58());
     }
 }
 
